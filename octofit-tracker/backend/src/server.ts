@@ -9,16 +9,29 @@ import Workout from './models/Workout'
 const app = express()
 const port = 8000
 const codespaceName = process.env.CODESPACE_NAME
+const frontendOrigin = process.env.FRONTEND_ORIGIN ?? (
+  codespaceName
+    ? `https://${codespaceName}-5173.app.github.dev`
+    : 'http://localhost:5173'
+)
 export const baseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : 'http://localhost:8000'
 
 app.use(express.json())
 
-// Allow the Vite frontend (port 5173) to read this GET-only API from another origin.
-app.use((_request, response, next) => {
-  response.setHeader('Access-Control-Allow-Origin', '*')
+app.use((request, response, next) => {
+  if (request.get('Origin') !== frontendOrigin) {
+    return response.status(403).json({ error: 'Origin not allowed' })
+  }
+
+  response.setHeader('Access-Control-Allow-Origin', frontendOrigin)
+  response.setHeader('Vary', 'Origin')
   response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  if (request.method === 'OPTIONS') {
+    return response.sendStatus(204)
+  }
+
   next()
 })
 
