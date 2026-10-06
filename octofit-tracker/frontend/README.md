@@ -1,3 +1,31 @@
+# OctoFit Tracker Frontend (React + Vite)
+
+## API configuration
+
+The app calls the Express API on port `8000`. The base URL is built from the
+`VITE_CODESPACE_NAME` Vite environment variable (read via `import.meta.env`).
+
+**`VITE_CODESPACE_NAME` must be defined when running in GitHub Codespaces.**
+Create `octofit-tracker/frontend/.env.local` (git-ignored):
+
+```bash
+echo "VITE_CODESPACE_NAME=$CODESPACE_NAME" > octofit-tracker/frontend/.env.local
+```
+
+| `VITE_CODESPACE_NAME` | API base URL                                         |
+| --------------------- | ---------------------------------------------------- |
+| set                   | `https://$VITE_CODESPACE_NAME-8000.app.github.dev`   |
+| unset                 | `http://localhost:8000` (local fallback)             |
+
+Restart `npm run dev --prefix octofit-tracker/frontend` after changing `.env.local`.
+Port `8000` must be public in Codespaces for the browser to reach the API.
+
+Endpoints used: `/api/activities/`, `/api/leaderboard/`, `/api/teams/`,
+`/api/users/`, `/api/workouts/`. Responses may be a plain array or a paginated
+object (`{ results: [...] }` or `{ data: [...] }`).
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

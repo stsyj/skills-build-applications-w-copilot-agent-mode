@@ -15,6 +15,13 @@ export const baseUrl = codespaceName
 
 app.use(express.json())
 
+// Allow the Vite frontend (port 5173) to read this GET-only API from another origin.
+app.use((_request, response, next) => {
+  response.setHeader('Access-Control-Allow-Origin', '*')
+  response.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
+  next()
+})
+
 app.get('/api/health', (_request, response) => {
   response.json({ status: 'ok', baseUrl })
 })
